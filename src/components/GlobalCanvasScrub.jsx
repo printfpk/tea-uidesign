@@ -20,14 +20,13 @@ export default function GlobalCanvasScrub({
   const rafRef = useRef(null)
   
   const [loaded, setLoaded] = useState(false)
-  const [loadProgress, setLoadProgress] = useState(0)
   
   const totalFrames = frameDirs.length * framesPerDir
 
   // Phase 1: Preload all frames
   useEffect(() => {
-    const images = []
-    let loadedCount = 0
+    const images = new Array(totalFrames)
+    imagesRef.current = images // Set reference immediately so drawFrame can access loaded frames
 
     // Build flat array of URLs
     const urls = []
@@ -37,27 +36,33 @@ export default function GlobalCanvasScrub({
       }
     })
 
-    urls.forEach((url, i) => {
-      const img = new Image()
-      img.src = url
-      img.onload = () => {
-        loadedCount++
-        setLoadProgress(Math.round((loadedCount / totalFrames) * 100))
-        if (loadedCount >= totalFrames) {
-          imagesRef.current = images
-          setLoaded(true)
-        }
+    if (urls.length === 0) {
+      setLoaded(true)
+      return
+    }
+
+    // Function to load the rest of the frames in the background
+    const loadRest = () => {
+      for (let i = 1; i < urls.length; i++) {
+        const img = new Image()
+        img.src = urls[i]
+        images[i] = img
       }
-      img.onerror = () => {
-        loadedCount++
-        setLoadProgress(Math.round((loadedCount / totalFrames) * 100))
-        if (loadedCount >= totalFrames) {
-          imagesRef.current = images
-          setLoaded(true)
-        }
-      }
-      images[i] = img
-    })
+    }
+
+    // Prioritize loading the very first frame to unblock the UI quickly
+    const firstImg = new Image()
+    firstImg.onload = () => {
+      setLoaded(true)
+      setTimeout(loadRest, 50) // Let React render the first frame before queueing the rest
+    }
+    firstImg.onerror = () => {
+      setLoaded(true)
+      setTimeout(loadRest, 50)
+    }
+    firstImg.src = urls[0]
+    images[0] = firstImg
+
   }, [frameDirs, framesPerDir, totalFrames])
 
   // Phase 2: Canvas rendering + Native Scroll Logic
@@ -210,7 +215,7 @@ export default function GlobalCanvasScrub({
             }}
           />
           <div className="text-label" style={{ color: 'var(--color-gold)' }}>
-            Loading Cinematic ({loadProgress}%)
+            Loading Cinematic...
           </div>
         </div>
       )}
