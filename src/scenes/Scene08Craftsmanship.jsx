@@ -6,6 +6,10 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { teaMessages } from '../utils/teaMessages'
 
+import leafGlb from '../assets/leaf.glb'
+import leaf01Glb from '../assets/leaf-01.glb'
+import leaf02Glb from '../assets/leaf-02.glb'
+
 gsap.registerPlugin(ScrollTrigger)
 
 const numLeaves = 150
@@ -162,9 +166,9 @@ function Scene8Canvas({ scrollRef }) {
       <directionalLight position={[-10, 5, -5]} intensity={0.5} color="#c8a96e" />
       
       {/* Three distinct leaf layers using the 3 GLB files, passing a unique seed for the messages */}
-      <LeafSwarm gltfPath="/src/assets/leaf.glb" scrollRef={scrollRef} baseSeed={0} />
-      <LeafSwarm gltfPath="/src/assets/leaf-01.glb" scrollRef={scrollRef} baseSeed={20} />
-      <LeafSwarm gltfPath="/src/assets/leaf-02.glb" scrollRef={scrollRef} baseSeed={40} />
+      <LeafSwarm gltfPath={leafGlb} scrollRef={scrollRef} baseSeed={0} />
+      <LeafSwarm gltfPath={leaf01Glb} scrollRef={scrollRef} baseSeed={20} />
+      <LeafSwarm gltfPath={leaf02Glb} scrollRef={scrollRef} baseSeed={40} />
     </>
   )
 }
@@ -214,6 +218,6 @@ export default function Scene08Craftsmanship() {
   )
 }
 
-useGLTF.preload('/src/assets/leaf.glb')
-useGLTF.preload('/src/assets/leaf-01.glb')
-useGLTF.preload('/src/assets/leaf-02.glb')
+useGLTF.preload(leafGlb)
+useGLTF.preload(leaf01Glb)
+useGLTF.preload(leaf02Glb)

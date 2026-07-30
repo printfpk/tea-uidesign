@@ -40,12 +40,12 @@ export default function Scene01Bowl() {
   }, [])
 
   return (
-    <TransparentScrubScene className="scene-01" scrubDuration={3}>
+    <TransparentScrubScene ref={containerRef} className="scene-01" scrubDuration={3}>
       <div className="scene-num-pos p-8 absolute top-0 right-0">
         <SceneNumber number={1} />
       </div>
 
-      <div ref={containerRef} className="w-full h-screen flex flex-col items-center justify-end pb-24 px-8 pt-8">
+      <div className="w-full h-screen flex flex-col items-center justify-end pb-24 px-8 pt-8">
         <h1 className="text-display text-display-xl text-center leading-none tracking-tighter w-full pointer-events-none">
           <span className="block pb-2 w-full text-center">
             <SplitText type="blur" className="text-ivory" duration={1.2}>THE</SplitText>

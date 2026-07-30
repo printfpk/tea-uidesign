@@ -1,10 +1,13 @@
-export default function TransparentScrubScene({
+import { forwardRef } from 'react'
+
+const TransparentScrubScene = forwardRef(({
   children,
   className = '',
   scrubDuration = 3,
-}) {
+}, ref) => {
   return (
     <section
+      ref={ref}
       className={`scene ${className}`}
       // The height drives the scroll duration for this specific segment of the timeline
       style={{ height: `${scrubDuration * 100}vh`, position: 'relative', display: 'block', zIndex: 1 }}
@@ -23,4 +26,6 @@ export default function TransparentScrubScene({
       </div>
     </section>
   )
-}
+})
+
+export default TransparentScrubScene

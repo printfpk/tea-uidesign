@@ -6,12 +6,13 @@ export default function Navbar() {
   return (
     <>
       <nav 
-        className="fixed top-0 left-0 w-full z-[60] flex justify-between items-center pointer-events-none px-6 py-4 md:px-12 md:py-6"
+        className="fixed top-0 left-0 w-full z-[60] flex justify-between items-center pointer-events-none px-6 py-8 md:px-12 md:py-12"
         style={{ 
-          background: isMobileMenuOpen ? 'transparent' : 'rgba(10, 10, 10, 0.4)',
-          backdropFilter: isMobileMenuOpen ? 'none' : 'blur(12px)',
-          WebkitBackdropFilter: isMobileMenuOpen ? 'none' : 'blur(12px)',
-          borderBottom: isMobileMenuOpen ? 'none' : '1px solid rgba(255, 255, 255, 0.08)',
+          background: isMobileMenuOpen ? 'transparent' : 'rgba(10, 10, 10, 0.25)',
+          backdropFilter: isMobileMenuOpen ? 'none' : 'blur(24px) saturate(150%)',
+          WebkitBackdropFilter: isMobileMenuOpen ? 'none' : 'blur(24px) saturate(150%)',
+          borderBottom: isMobileMenuOpen ? 'none' : '1px solid rgba(255, 255, 255, 0.12)',
+          boxShadow: isMobileMenuOpen ? 'none' : '0 8px 32px 0 rgba(0, 0, 0, 0.3)',
           transition: 'all 0.3s ease'
         }}
       >

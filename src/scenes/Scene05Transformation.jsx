@@ -40,8 +40,8 @@ export default function Scene05Transformation() {
   }, [])
 
   return (
-    <TransparentScrubScene className="scene-05" scrubDuration={2.5}>
-      <div ref={containerRef} className="w-full h-screen relative flex flex-col items-center justify-end pb-24 px-8 pt-8">
+    <TransparentScrubScene ref={containerRef} className="scene-05" scrubDuration={2.5}>
+      <div className="w-full h-screen relative flex flex-col items-center justify-end pb-24 px-8 pt-8">
         
         <div className="scene-num-pos p-8 absolute top-0 right-0 z-20">
           <SceneNumber number={5} />
