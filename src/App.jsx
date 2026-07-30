@@ -57,7 +57,7 @@ function App() {
         {/* Continuous Video Sequence (Scenes 1-5) */}
         <div className="continuous-sequence" style={{ position: 'relative' }}>
           <GlobalCanvasScrub />
-          
+
           <Scene01Bowl />
           <Scene02Ingredients />
           <Scene03Infusion />

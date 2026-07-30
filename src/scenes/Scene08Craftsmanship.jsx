@@ -191,51 +191,16 @@ export default function Scene08Craftsmanship() {
           }
         }
       })
-
-      // Animate the product image scaling and fading in behind the parting leaves
-      tl.fromTo(productRef.current, 
-        { opacity: 0, scale: 0.8, filter: 'blur(10px)' }, 
-        { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.4, ease: 'power2.out' }, 
-        0.4 // Start fading in as the leaves part
-      )
-
-      // Fade in the product typography
-      tl.fromTo(textRef.current,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.2, ease: 'power2.out' },
-        0.6
-      )
-
-      // 80% - 100%: Fade entire block to dark for smooth handoff to Scene 9
-      tl.to(productRef.current, { filter: 'brightness(0.3)', opacity: 0, duration: 0.2, ease: 'power2.inOut' }, 0.8)
-      tl.to(textRef.current, { opacity: 0, duration: 0.2, ease: 'power2.out' }, 0.8)
+      // The 3D leaf swipe is driven independently by scrollProgressRef
     }, sectionRef)
 
     return () => ctx.revert()
   }, [])
 
   return (
-    <section ref={sectionRef} className="relative bg-black" style={{ height: '400vh' }}>
+    <section ref={sectionRef} className="relative bg-black" style={{ height: '200vh' }}>
       <div className="sticky top-0 w-full overflow-hidden flex items-center justify-center" style={{ height: '100vh', background: '#070707' }}>
         
-        {/* Background / Product Reveal Layer */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
-          <img 
-            ref={productRef}
-            src="/premium-tea-packet.png" 
-            alt="Darjeeling Origins Premium Tea Packet"
-            className="w-auto h-[60vh] max-h-[600px] object-contain drop-shadow-2xl opacity-0"
-          />
-          <div ref={textRef} className="mt-8 text-center opacity-0">
-            <h3 className="text-display text-4xl text-[var(--color-gold)] mb-2" style={{ textTransform: 'none' }}>
-              First Flush Reserve
-            </h3>
-            <p className="text-body text-sm tracking-[0.2em] uppercase text-white/50">
-              The Essence of the Himalayas
-            </p>
-          </div>
-        </div>
-
         {/* 3D Leaf Swarm Layer */}
         {/* REMOVED pointer-events-none SO HOVER ACTUALLY WORKS */}
         <div className="absolute inset-0 z-20">
