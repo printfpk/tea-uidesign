@@ -1,0 +1,268 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════
+   DARJEELING ORIGINS — DESIGN SYSTEM
+   A dark cinematic theatre for premium tea
+   ═══════════════════════════════════════════════════ */
+
+@theme {
+  --color-void: #070707;
+  --color-obsidian: #0D0D0D;
+  --color-charcoal: #1A1A1A;
+  --color-smoke: #2A2A2A;
+  --color-ash: #6B6565;
+  --color-mist: #9A9494;
+  --color-parchment: #F5F0E8;
+  --color-ivory: #FAF8F5;
+  --color-gold: #C8A96E;
+  --color-gold-light: #D4BA82;
+  --color-gold-dark: #A68B4B;
+  --color-amber: #E8C87A;
+  --color-rust: #8B6914;
+
+  --font-display: 'Cormorant Garamond', 'Georgia', serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out-circ: cubic-bezier(0.85, 0, 0.15, 1);
+}
+
+/* ─── Base Reset ─── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto; /* GSAP handles smooth scroll */
+  background: var(--color-void);
+  color: var(--color-parchment);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--color-void);
+  color: var(--color-parchment);
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* ─── Selection ─── */
+::selection {
+  background: var(--color-gold);
+  color: var(--color-void);
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-void);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-smoke);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-dark);
+}
+
+/* ─── Typography Scale ─── */
+.text-display {
+  font-family: var(--font-display);
+  font-weight: 300;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--color-ivory);
+  text-transform: uppercase;
+}
+
+.text-display-xl {
+  font-size: clamp(4rem, 10vw, 12rem);
+}
+
+.text-display-lg {
+  font-size: clamp(3rem, 8vw, 9rem);
+}
+
+.text-display-md {
+  font-size: clamp(2rem, 5vw, 5rem);
+}
+
+.text-display-sm {
+  font-size: clamp(1.5rem, 3vw, 3rem);
+}
+
+.text-editorial {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-style: italic;
+  color: var(--color-gold);
+  letter-spacing: 0.02em;
+}
+
+.text-label {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-ash);
+}
+
+.text-body {
+  font-family: var(--font-body);
+  font-size: clamp(0.875rem, 1.2vw, 1.05rem);
+  font-weight: 300;
+  line-height: 1.8;
+  color: var(--color-mist);
+  max-width: 36ch;
+}
+
+.text-body-wide {
+  max-width: 52ch;
+}
+
+/* ─── Scene Container ─── */
+.scene {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scene-pinned {
+  height: 100vh;
+}
+
+/* ─── Gold Accents ─── */
+.gold-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+  width: 0;
+  transition: width 1.5s var(--ease-out-expo);
+}
+
+.gold-line.active {
+  width: 100%;
+}
+
+.gold-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-gold);
+  box-shadow: 0 0 12px var(--color-gold), 0 0 24px rgba(200, 169, 110, 0.3);
+}
+
+/* ─── Scene Number ─── */
+.scene-number {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: var(--color-ash);
+  opacity: 0.6;
+}
+
+/* ─── Coordinates ─── */
+.coordinates {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: var(--color-ash);
+  opacity: 0.5;
+  line-height: 1.8;
+}
+
+/* ─── Grain Overlay ─── */
+.grain-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* ─── Video Container ─── */
+.video-container {
+  position: absolute;
+  inset: 0;
+}
+
+.video-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ─── Loading Screen ─── */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: var(--color-void);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.loading-ring {
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--color-smoke);
+  border-top-color: var(--color-gold);
+  border-radius: 50%;
+  animation: spin 1.2s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-ash);
+}
+
+.loading-progress {
+  width: 120px;
+  height: 1px;
+  background: var(--color-smoke);
+  position: relative;
+  overflow: hidden;
+}
+
+.loading-progress-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--color-gold);
+  transition: width 0.3s ease;
+}

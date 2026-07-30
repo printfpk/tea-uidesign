@@ -1,0 +1,562 @@
+/* ═══════════════════════════════════════════════════
+   SCENE-SPECIFIC STYLES
+   Each scene = a unique theatrical composition
+   Video = fullscreen background, content overlays
+   ═══════════════════════════════════════════════════ */
+
+/* ─── Navbar ─── */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 1.5rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  mix-blend-mode: difference;
+  pointer-events: none;
+}
+
+.navbar a,
+.navbar button {
+  pointer-events: auto;
+}
+
+.navbar-brand {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--color-ivory);
+  text-decoration: none;
+}
+
+.navbar-progress {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--color-ash);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.navbar-progress-line {
+  width: 60px;
+  height: 1px;
+  background: var(--color-smoke);
+  position: relative;
+}
+
+.navbar-progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--color-gold);
+  transition: width 0.6s var(--ease-out-expo);
+}
+
+/* ─── Scene Content (overlay wrapper inside VideoScrub) ─── */
+.scene-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── Scene 01: Bowl / The Awakening ─── */
+.scene-01 .scene-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+  align-items: center;
+  padding: 0 5vw;
+  gap: 2rem;
+}
+
+.scene-01 .title-block {
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.scene-01 .scene-meta {
+  position: absolute;
+  bottom: 3rem;
+  right: 5vw;
+  z-index: 3;
+  text-align: right;
+}
+
+.scene-01 .scene-num-pos {
+  position: absolute;
+  top: 6rem;
+  right: 5vw;
+  z-index: 3;
+}
+
+/* ─── Scene 02: Ingredients ─── */
+.scene-02 .scene-content {
+  position: relative;
+}
+
+.scene-02 .ingredient-labels {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.ingredient-label {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.ingredient-label .label-text {
+  font-family: var(--font-display);
+  font-size: clamp(0.9rem, 1.5vw, 1.3rem);
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-ivory);
+  text-shadow: 0 2px 12px rgba(0,0,0,0.8);
+}
+
+.ingredient-label .label-line {
+  width: 1px;
+  background: var(--color-gold);
+  opacity: 0.5;
+}
+
+.scene-02 .scene-num-pos {
+  position: absolute;
+  top: 6rem;
+  right: 5vw;
+  z-index: 3;
+}
+
+/* ─── Scene 03: Infusion ─── */
+.scene-03 .scene-content {
+  position: relative;
+}
+
+.scene-03 .bg-text {
+  position: absolute;
+  z-index: 0;
+  font-family: var(--font-display);
+  font-size: clamp(6rem, 18vw, 20rem);
+  font-weight: 300;
+  text-transform: uppercase;
+  color: var(--color-ivory);
+  opacity: 0.04;
+  letter-spacing: 0.05em;
+  line-height: 0.85;
+  user-select: none;
+  white-space: nowrap;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* ─── Scene 04: Aroma ─── */
+.scene-04 .scene-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.scene-04 .aroma-title {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 8rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--color-ivory);
+  letter-spacing: 0.08em;
+  text-shadow: 0 4px 30px rgba(0,0,0,0.6);
+}
+
+/* ─── Scene 05: Transformation ─── */
+.scene-05 .scene-content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 5vw;
+}
+
+.scene-05 .text-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 500px;
+}
+
+.scene-05 .crafted-text {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 4.5rem);
+  font-weight: 300;
+  color: var(--color-ivory);
+  line-height: 1.1;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.6);
+}
+
+/* ─── Scene 06: Distribution ─── */
+.scene-06 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  padding: 0 5vw;
+}
+
+.scene-06 .map-container {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  aspect-ratio: 16/10;
+}
+
+.scene-06 .map-svg-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.scene-06 .text-left {
+  position: absolute;
+  left: 5vw;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+}
+
+.scene-06 .stats-row {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  gap: 4rem;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 300;
+  color: var(--color-gold);
+  line-height: 1;
+}
+
+.stat-label {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-ash);
+  margin-top: 0.5rem;
+}
+
+.scene-06 .progress-line {
+  position: absolute;
+  top: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--color-ash);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.progress-line-track {
+  width: 80px;
+  height: 1px;
+  background: var(--color-smoke);
+  position: relative;
+}
+
+.progress-line-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--color-gold);
+  box-shadow: 0 0 8px var(--color-gold);
+}
+
+/* ─── Scene 07: Tea Gardens ─── */
+.scene-07 {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.scene-07 .panorama {
+  position: absolute;
+  inset: -5%;
+  z-index: 0;
+}
+
+.scene-07 .panorama img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scene-07 .overlay-gradient {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to right,
+    rgba(7,7,7,0.8) 0%,
+    rgba(7,7,7,0.3) 40%,
+    rgba(7,7,7,0.1) 60%,
+    rgba(7,7,7,0.6) 100%
+  );
+}
+
+.scene-07 .caption-block {
+  position: relative;
+  z-index: 2;
+  padding: 0 5vw 5rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.scene-07 .data-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* ─── Scene 08: Craftsmanship ─── */
+.scene-08 {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.scene-08 .portrait {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.scene-08 .portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scene-08 .quote-overlay {
+  position: relative;
+  z-index: 2;
+  padding: 0 5vw;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(
+    90deg,
+    rgba(7,7,7,0.85) 0%,
+    rgba(7,7,7,0.4) 50%,
+    rgba(7,7,7,0.1) 100%
+  );
+}
+
+.scene-08 .quote-text {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 6rem);
+  font-weight: 300;
+  line-height: 1.15;
+  color: var(--color-ivory);
+  max-width: 50%;
+}
+
+/* ─── Scene 09: Quality ─── */
+.scene-09 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  padding: 6rem 5vw;
+  min-height: 100vh;
+  position: relative;
+}
+
+.scene-09 .awards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  width: 100%;
+  max-width: 900px;
+}
+
+.award-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2.5rem 1.5rem;
+  border: 1px solid rgba(200, 169, 110, 0.15);
+  border-radius: 2px;
+  background: rgba(200, 169, 110, 0.03);
+  text-align: center;
+  backdrop-filter: blur(4px);
+}
+
+.award-card .award-number {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 300;
+  color: var(--color-gold);
+  line-height: 1;
+}
+
+.award-card .award-suffix {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  font-weight: 300;
+  color: var(--color-gold);
+}
+
+.award-card .award-label {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-ash);
+}
+
+/* ─── Scene 10: CTA ─── */
+.scene-10 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  text-align: center;
+  padding: 0 5vw;
+  min-height: 100vh;
+  position: relative;
+}
+
+.scene-10 .cta-title {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 10vw, 10rem);
+  font-weight: 300;
+  line-height: 0.95;
+  text-transform: uppercase;
+  color: var(--color-ivory);
+  letter-spacing: -0.02em;
+}
+
+.scene-10 .cta-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2.5rem;
+  border: 1px solid var(--color-gold);
+  background: transparent;
+  color: var(--color-gold);
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.5s var(--ease-out-expo);
+}
+
+.scene-10 .cta-button:hover {
+  background: var(--color-gold);
+  color: var(--color-void);
+}
+
+.scene-10 .cta-button .arrow {
+  transition: transform 0.5s var(--ease-out-expo);
+}
+
+.scene-10 .cta-button:hover .arrow {
+  transform: translateX(6px);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .scene-01 .scene-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding: 6rem 1.5rem 3rem;
+  }
+
+  .scene-01 .scene-meta {
+    position: relative;
+    bottom: auto;
+    right: auto;
+    text-align: center;
+    margin-top: 1.5rem;
+  }
+
+  .scene-01 .scene-num-pos {
+    top: 5rem;
+    right: 1.5rem;
+  }
+
+  .scene-05 .scene-content {
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    text-align: center;
+  }
+
+  .scene-06 .stats-row {
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .scene-07 .caption-block {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2rem;
+    padding: 0 1.5rem 3rem;
+  }
+
+  .scene-08 .quote-text {
+    max-width: 90%;
+  }
+
+  .scene-09 .awards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .navbar {
+    padding: 1rem 1.5rem;
+  }
+}
