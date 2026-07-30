@@ -51,8 +51,8 @@ function LeafSwarm({ gltfPath, scrollRef, baseSeed }) {
     if (!meshRef.current) return
     const progress = scrollRef.current // 0 to 1
 
-    // Swipe logic: leaves start moving apart at progress 0.3, max out at 0.5 (faster swipe)
-    const swipeMultiplier = Math.max(0, Math.min((progress - 0.3) / 0.2, 1))
+    // Swipe logic: leaves start moving apart at progress 0.2, max out at 0.9
+    const swipeMultiplier = Math.max(0, Math.min((progress - 0.2) / 0.7, 1))
     const swipeForce = Math.pow(swipeMultiplier, 2) * 40
 
     // To track hovered pos purely in the ref
@@ -202,7 +202,7 @@ export default function Scene08Craftsmanship() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="relative bg-black" style={{ height: '200vh' }}>
+    <section ref={sectionRef} className="relative bg-black" style={{ height: '130vh' }}>
       <div className="sticky top-0 w-full overflow-hidden flex items-center justify-center" style={{ height: '100vh', background: '#070707' }}>
         
         {/* 3D Leaf Swarm Layer */}
