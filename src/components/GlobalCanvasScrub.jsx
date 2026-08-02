@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 
+const DEFAULT_FRAME_DIRS = [
+  '/frames/video-1',
+  '/frames/video-2',
+  '/frames/video-3',
+  '/frames/video-4',
+  '/frames/video-5',
+]
+
 export default function GlobalCanvasScrub({
-  frameDirs = [
-    '/frames/video-1',
-    '/frames/video-2',
-    '/frames/video-3',
-    '/frames/video-4',
-    '/frames/video-5',
-  ],
+  frameDirs = DEFAULT_FRAME_DIRS,
   framesPerDir = 120,
   overlayGradient = true,
   videoOpacity = 1,
@@ -19,11 +21,29 @@ export default function GlobalCanvasScrub({
   const targetFrameRef = useRef(0)
   const rafRef = useRef(null)
   
-  const [loaded, setLoaded] = useState(false)
+  const [networkProgress, setNetworkProgress] = useState(0)
+  const [timeProgress, setTimeProgress] = useState(0)
   
   const totalFrames = frameDirs.length * framesPerDir
 
-  // Phase 1: Preload all frames
+  useEffect(() => {
+    const DURATION = 8000 // 8 seconds
+    const startTime = Date.now()
+    let raf
+
+    const updateTime = () => {
+      const elapsed = Date.now() - startTime
+      const p = Math.min(100, (elapsed / DURATION) * 100)
+      setTimeProgress(p)
+      if (p < 100) {
+        raf = requestAnimationFrame(updateTime)
+      }
+    }
+    raf = requestAnimationFrame(updateTime)
+    return () => cancelAnimationFrame(raf)
+  }, [])
+
+  // Phase 1: Preload all frames using Sparse Batching
   useEffect(() => {
     const images = new Array(totalFrames)
     imagesRef.current = images // Set reference immediately so drawFrame can access loaded frames
@@ -37,37 +57,74 @@ export default function GlobalCanvasScrub({
     })
 
     if (urls.length === 0) {
-      setLoaded(true)
+      setNetworkProgress(100)
+      setTimeProgress(100)
       return
     }
 
-    // Function to load the rest of the frames in the background
-    const loadRest = () => {
-      for (let i = 1; i < urls.length; i++) {
-        const img = new Image()
-        img.src = urls[i]
-        images[i] = img
+    // Create a sparse loading queue
+    const loadQueue = []
+    // Pass 1: Every 12th frame (10 frames per 120-frame dir) - for low fps fallback
+    for (let i = 0; i < urls.length; i += 12) {
+      loadQueue.push(i)
+    }
+    // Pass 2: Every 6th frame
+    for (let i = 6; i < urls.length; i += 12) {
+      loadQueue.push(i)
+    }
+    // Pass 3: All remaining frames
+    for (let i = 0; i < urls.length; i++) {
+      if (i % 6 !== 0) {
+        loadQueue.push(i)
       }
     }
 
-    // Prioritize loading the very first frame to unblock the UI quickly
-    const firstImg = new Image()
-    firstImg.onload = () => {
-      setLoaded(true)
-      setTimeout(loadRest, 50) // Let React render the first frame before queueing the rest
+    // We will wait for Pass 1 to finish before hiding the loader (approx 50 frames total)
+    const initialRequired = loadQueue.filter(i => i % 12 === 0).length
+    let initialLoaded = 0
+    let queueIndex = 0
+    const BATCH_SIZE = 8
+
+    const loadNextBatch = () => {
+      if (queueIndex >= loadQueue.length) return // Done!
+
+      const batch = loadQueue.slice(queueIndex, queueIndex + BATCH_SIZE)
+      queueIndex += BATCH_SIZE
+
+      let loadedInBatch = 0
+      
+      batch.forEach(index => {
+        const img = new Image()
+        img.src = urls[index]
+        
+        const onComplete = () => {
+          loadedInBatch++
+          
+          if (index % 12 === 0) {
+            initialLoaded++
+            setNetworkProgress(Math.min(100, Math.round((initialLoaded / initialRequired) * 100)))
+          }
+
+          if (loadedInBatch === batch.length) {
+            // Add a small delay to prevent thread locking
+            setTimeout(loadNextBatch, 15)
+          }
+        }
+        
+        img.onload = onComplete
+        img.onerror = onComplete
+        images[index] = img
+      })
     }
-    firstImg.onerror = () => {
-      setLoaded(true)
-      setTimeout(loadRest, 50)
-    }
-    firstImg.src = urls[0]
-    images[0] = firstImg
+
+    // Start loading batches
+    loadNextBatch()
 
   }, [frameDirs, framesPerDir, totalFrames])
 
   // Phase 2: Canvas rendering + Native Scroll Logic
   useEffect(() => {
-    if (!loaded || !canvasRef.current || !containerRef.current) return
+    if (networkProgress < 100 || !canvasRef.current || !containerRef.current) return
 
     const container = containerRef.current
     const sequenceWrapper = container.closest('.continuous-sequence') || container.parentElement
@@ -86,8 +143,23 @@ export default function GlobalCanvasScrub({
     ]
 
     const drawFrame = (index) => {
-      const img = images[index]
-      if (!img || !img.complete || img.naturalWidth === 0) return
+      let img = images[index]
+      let actualIndex = index
+
+      // If the exact frame isn't loaded, find the closest previous loaded frame
+      if (!img || !img.complete || img.naturalWidth === 0) {
+        let found = false
+        // Search backwards for a loaded frame
+        for (let i = index - 1; i >= 0; i--) {
+          if (images[i] && images[i].complete && images[i].naturalWidth > 0) {
+            img = images[i]
+            actualIndex = i
+            found = true
+            break
+          }
+        }
+        if (!found) return // Nothing to draw yet
+      }
 
       const cw = canvas.width
       const ch = canvas.height
@@ -96,10 +168,10 @@ export default function GlobalCanvasScrub({
 
       const baseScale = Math.max(cw / iw, ch / ih)
       
-      const videoIndex = Math.min(Math.floor(index / framesPerDir), VIDEO_CONFIGS.length - 1)
+      const videoIndex = Math.min(Math.floor(actualIndex / framesPerDir), VIDEO_CONFIGS.length - 1)
       const config = VIDEO_CONFIGS[videoIndex]
       
-      const localIndex = index % framesPerDir
+      const localIndex = actualIndex % framesPerDir
       const segmentProgress = localIndex / (framesPerDir - 1)
       
       const currentZoom = config.scaleStart + (config.scaleEnd - config.scaleStart) * segmentProgress
@@ -162,7 +234,10 @@ export default function GlobalCanvasScrub({
       window.removeEventListener('scroll', handleScroll)
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
-  }, [loaded, totalFrames, framesPerDir])
+  }, [networkProgress, totalFrames, framesPerDir])
+
+  const displayedProgress = Math.floor(Math.min(networkProgress, timeProgress))
+  const showLoader = displayedProgress < 100
 
   return (
     <div 
@@ -189,36 +264,78 @@ export default function GlobalCanvasScrub({
         }}
       />
 
-      {!loaded && (
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            zIndex: 3,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '1rem',
-            background: 'var(--color-void)',
-            pointerEvents: 'auto'
-          }}
-        >
-          <div
-            style={{
-              width: '40px',
-              height: '40px',
-              border: '1px solid var(--color-smoke)',
-              borderTopColor: 'var(--color-gold)',
-              borderRadius: '50%',
-              animation: 'spin 1.2s linear infinite',
-            }}
-          />
-          <div className="text-label" style={{ color: 'var(--color-gold)' }}>
-            Loading Cinematic...
+      {/* Loading Overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          zIndex: 100,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: '#070707',
+          transition: 'opacity 2s cubic-bezier(0.4, 0, 0.2, 1)',
+          opacity: showLoader ? 1 : 0,
+          pointerEvents: showLoader ? 'auto' : 'none'
+        }}
+      >
+        <div style={{ 
+          textAlign: 'center', 
+          transition: 'transform 2s ease-out', 
+          transform: showLoader ? 'scale(1)' : 'scale(1.05)' 
+        }}>
+          <h1 className="text-display" style={{ 
+            fontSize: '4rem', 
+            color: 'var(--color-gold)', 
+            letterSpacing: '0.2em', 
+            marginBottom: '1rem', 
+            fontWeight: 300 
+          }}>
+            TEA
+          </h1>
+          <p className="text-body" style={{ 
+            color: 'var(--color-parchment-200)', 
+            letterSpacing: '0.4em', 
+            textTransform: 'uppercase', 
+            fontSize: '0.875rem', 
+            marginBottom: '4rem', 
+            opacity: 0.7 
+          }}>
+            The Infusion Experience
+          </p>
+          
+          <div style={{ 
+            width: '240px', 
+            height: '1px', 
+            background: 'rgba(255,255,255,0.1)', 
+            margin: '0 auto', 
+            position: 'relative', 
+            overflow: 'hidden' 
+          }}>
+            <div 
+              style={{ 
+                position: 'absolute', 
+                top: 0, 
+                left: 0, 
+                height: '100%', 
+                background: 'var(--color-gold)',
+                width: `${displayedProgress}%`,
+                transition: 'width 0.1s linear'
+              }} 
+            />
+          </div>
+          <div className="text-label" style={{ 
+            color: 'var(--color-gold)', 
+            marginTop: '1.5rem', 
+            opacity: 0.5, 
+            fontSize: '0.75rem',
+            letterSpacing: '0.1em'
+          }}>
+            {displayedProgress === 100 ? 'STEEPING COMPLETE' : `STEEPING ${displayedProgress.toString().padStart(2, '0')}%`}
           </div>
         </div>
-      )}
+      </div>
 
       {overlayGradient && (
         <div
